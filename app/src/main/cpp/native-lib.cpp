@@ -403,7 +403,7 @@ Java_com_ftsafe_chuangxin_myapplication_MainActivity_sm2Sign(JNIEnv *env,
         return NULL;
     }
 
-    size_t signLen = 0;
+    unsigned int signLen = 0;
     iret = SM2_sign(NID_sm3, z, zlen, NULL, &signLen, ec_key);
     if (!iret) {
         return NULL;
