@@ -2,6 +2,7 @@ package com.ftsafe.chuangxin.myapplication;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
 import android.widget.TextView;
@@ -37,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mDialog = new InputDialog(this);
-        genSM2KeyPairs();
+        String packagePath = getApplicationContext().getFilesDir().getAbsolutePath();
+        genSM2KeyPairs(packagePath);
     }
 
     @OnClick({R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn5, R.id.btn7, R.id.btn9})
@@ -111,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
         byte encMsg[];
         switch (view.getId()) {
             case R.id.btn4:
+                if(TextUtils.isEmpty(b64SM4EncMsg)){
+                    Toast.makeText(this,"請先加密!",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 encMsg = sm4Dec(Base64.decode(b64SM4EncMsg, Base64.DEFAULT), Base64.decode(b64SM4EncMsg, Base64.DEFAULT).length, key.getBytes());
                 sb.delete(0, sb.length());
                 sb.append("key : ").append(key).append("\n\n")
@@ -119,6 +125,10 @@ public class MainActivity extends AppCompatActivity {
                 mShow.setText(sb);
                 break;
             case R.id.btn6:
+                if(TextUtils.isEmpty(b64SM2EncMsg)){
+                    Toast.makeText(this,"請先加密!",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 encMsg = sm2Dec(Base64.decode(b64SM2EncMsg, Base64.DEFAULT), Base64.decode(b64SM2EncMsg, Base64.DEFAULT).length);
                 sb.delete(0, sb.length());
                 sb.append("密文 ： ").append(b64SM2EncMsg).append("\n\n")
@@ -126,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
                 mShow.setText(sb);
                 break;
             case R.id.btn8:
+                if(TextUtils.isEmpty(b64SM2SignMsg)){
+                    Toast.makeText(this,"請先加密!",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 String result = null;
                 int ret = sm2Verify(plain.getBytes(), plain.getBytes().length, Base64.decode(b64SM2SignMsg, Base64.DEFAULT), Base64.decode(b64SM2SignMsg, Base64.DEFAULT).length);
                 if (ret == 0)
@@ -138,6 +152,10 @@ public class MainActivity extends AppCompatActivity {
                 mShow.setText(sb);
                 break;
             case R.id.btn10:
+                if(TextUtils.isEmpty(b64AESEncMsg)){
+                    Toast.makeText(this,"請先加密!",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 encMsg = aesDec(Base64.decode(b64AESEncMsg, Base64.DEFAULT), Base64.decode(b64AESEncMsg, Base64.DEFAULT).length, key.getBytes());
                 sb.delete(0, sb.length());
                 sb.append("key : ").append(key).append("\n\n")
@@ -178,5 +196,5 @@ public class MainActivity extends AppCompatActivity {
 
     public native int sm2Verify(byte in[], int length, byte sign[], int signLen);
 
-    public native int genSM2KeyPairs();
+    public native int genSM2KeyPairs(String path);
 }

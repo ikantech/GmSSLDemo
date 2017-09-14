@@ -9,7 +9,7 @@
 #include <openssl/aes.h>
 #include "utils.h"
 
-char *path = "/data/user/0/com.ftsafe.chuangxin.myapplication/files";
+char *path;
 
 
 EC_KEY *getEcKey() {
@@ -149,7 +149,16 @@ Java_com_ftsafe_chuangxin_myapplication_MainActivity_sha1(JNIEnv *env,
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_ftsafe_chuangxin_myapplication_MainActivity_genSM2KeyPairs(JNIEnv *env,
-                                                                    jobject instance) {
+                                                                    jobject instance,
+                                                                    jstring path_) {
+
+    const char *p = env->GetStringUTFChars(path_, false);
+    int pLen = env->GetStringUTFLength(path_);
+
+    path = (char *) malloc(pLen + 1);
+    memset(path, 0, pLen + 1);
+    memcpy(path, p, pLen);
+
     std::string p1 = path;
     p1.append("/private");
 
